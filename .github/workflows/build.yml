@@ -47,7 +47,6 @@ jobs:
           MAKEROM="$(find /tmp/makerom -type f -name makerom | head -n 1)"
           test -n "$MAKEROM"
           chmod +x "$MAKEROM"
-          "$MAKEROM" -help
 
       - name: Package installable CIA
         run: |
