@@ -7,10 +7,11 @@ static PrintConsole topScreen;
 static PrintConsole bottomScreen;
 static int selected = 0;
 static int page = 0;
+static int soundEnabled = 1;
 
-#define BG_BLUE "\x1b[48;2;7;29;68m"
-#define TURQUOISE "\x1b[38;2;44;205;230m"
-#define WHITE "\x1b[38;2;235;248;255m"
+#define BG_BLUE "\x1b[44m"
+#define TURQUOISE "\x1b[36m"
+#define WHITE "\x1b[37m"
 
 #define CLICK_RATE 32728
 #define CLICK_SAMPLES 1500
@@ -32,6 +33,7 @@ static void makeClick(void)
 
 static void playClick(void)
 {
+    if (!soundEnabled) return;
     ndspChnReset(0);
     ndspChnSetRate(0, CLICK_RATE);
     ndspChnSetFormat(0, NDSP_FORMAT_MONO_PCM16);
@@ -53,28 +55,59 @@ static void line(void)
     printf(WHITE);
 }
 
+static void drawLogo(void)
+{
+    u16 width = 0, height = 0;
+    u8 *fb = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, &width, &height);
+    if (!fb || width != 240 || height != 400) return;
+    const int stride = height;
+    /* Turquoise rounded speech bubble, navy dots and a tiny sparkle. */
+    for (int x = 324; x <= 378; x++) {
+        for (int y = 18; y <= 64; y++) {
+            int dx = x < 336 ? 336-x : (x > 366 ? x-366 : 0);
+            int dy = y < 30 ? 30-y : (y > 52 ? y-52 : 0);
+            if (dx*dx + dy*dy <= 12*12) {
+                int p = (x * stride + y) * 3;
+                fb[p] = 230; fb[p+1] = 205; fb[p+2] = 44;
+            }
+        }
+    }
+    for (int x = 330; x <= 348; x++)
+        for (int y = 54; y <= 70; y++)
+            if (y >= 70 - (x-330)) {
+                int p = (x * stride + y) * 3;
+                fb[p] = 230; fb[p+1] = 205; fb[p+2] = 44;
+            }
+    for (int i = 0; i < 3; i++) {
+        int cx = 340 + i*11, cy = 41;
+        for (int x = -3; x <= 3; x++)
+            for (int y = -3; y <= 3; y++)
+                if (x*x + y*y <= 9) {
+                    int p = ((cx+x) * stride + cy+y) * 3;
+                    fb[p] = 68; fb[p+1] = 29; fb[p+2] = 7;
+                }
+    }
+}
+
 static void drawHeader(void)
 {
     beginScreen(&topScreen);
     printf("\n");
     printf(TURQUOISE);
-    printf("                                      .------.\n");
-    printf("                                      | o o o|\n");
-    printf("                                      '------'\n");
-    printf("\n");
     printf("  CHAT 3DS\n\n");
     printf(WHITE);
     printf("       KI. DIREKT. MOBIL.\n\n");
     printf("   Dein kleiner KI-Begleiter\n");
-    printf("   für den Nintendo 3DS.\n\n");
+    printf("   fuer den Nintendo 3DS.\n\n");
     printf(TURQUOISE);
     printf("  --------------------------\n");
     printf("       MADE BY TOASTLINUS\n");
     printf("  --------------------------\n\n");
     printf(WHITE);
     printf("   Willkommen bei Chat3DS!\n\n");
-    printf("   Wähle unten, was du tun\n");
-    printf("   möchtest.");
+    printf("   Waehle unten, was du tun\n");
+    printf("   moechtest.");
+    drawLogo();
 }
 
 static void drawMenu(void)
@@ -86,7 +119,7 @@ static void drawMenu(void)
     line();
     printf(TURQUOISE);
     printf("  |                          |\n");
-    printf("  |       HAUPTMENÜ         |\n");
+    printf("  |       HAUPTMENUE        |\n");
     printf("  |                          |\n");
     line();
     printf("\n");
@@ -95,17 +128,21 @@ static void drawMenu(void)
     printf(WHITE);
     printf("      Mit Chat3DS loslegen\n\n");
     printf(selected == 1 ? TURQUOISE : WHITE);
-    printf("  %s  ÜBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
+    printf("  %s  UEBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
     printf(WHITE);
     printf("      Infos zum Projekt\n\n");
+    printf(selected == 2 ? TURQUOISE : WHITE);
+    printf("  %s  EINSTELLUNGEN\n", selected == 2 ? ">>" : "  ");
+    printf(WHITE);
+    printf("      Sprache und Ton\n\n");
     line();
     printf(TURQUOISE);
     printf("  |  HOCH / RUNTER  AUSWAHL  |\n");
-    printf("  |  A               ÖFFNEN|\n");
+    printf("  |  A              OEFFNEN |\n");
     printf("  |  START           ENDE   |\n");
     line();
     printf(TURQUOISE);
-    printf("\n          VERSION 0.5");
+    printf("\n          VERSION 0.6");
     printf(WHITE);
 }
 
@@ -126,6 +163,28 @@ static void drawChatInfo(void)
     line();
     printf(TURQUOISE);
     printf("\n  B  ZURÜCK ZUM HAUPTMENÜ");
+    printf(WHITE);
+}
+
+static void drawSettings(void)
+{
+    beginScreen(&bottomScreen);
+    printf(TURQUOISE);
+    printf("\n          EINSTELLUNGEN\n\n");
+    line();
+    printf(WHITE);
+    printf("\n  MENUESPRACHE\n");
+    printf("  Deutsch (aktuell)\n\n");
+    printf("  MENUTON\n");
+    printf("  %s\n\n", soundEnabled ? "EIN" : "AUS");
+    printf("  KI-ANBIETER\n");
+    printf("  Noch nicht verbunden\n");
+    printf("  ChatGPT geplant; weitere\n");
+    printf("  Anbieter spaeter moeglich.\n\n");
+    line();
+    printf(TURQUOISE);
+    printf("\n  A  TON EIN/AUS\n");
+    printf("  B  ZURUECK");
     printf(WHITE);
 }
 
@@ -171,7 +230,7 @@ int main(int argc, char* argv[])
             int oldSelected = selected;
 
             if (kDown & KEY_UP)
-                selected = (selected + 1) % 2;
+                selected = (selected + 1) % 3;
             if (kDown & KEY_DOWN)
                 selected = (selected + 1) % 2;
 
@@ -184,10 +243,22 @@ int main(int argc, char* argv[])
             {
                 playClick();
                 page = selected + 1;
-                if (page == 1)
-                    drawChatInfo();
-                else
-                    drawAbout();
+                if (page == 1) drawChatInfo();
+                else if (page == 2) drawAbout();
+                else drawSettings();
+            }
+        }
+        else if (page == 3)
+        {
+            if (kDown & KEY_A) {
+                soundEnabled = !soundEnabled;
+                if (soundEnabled) playClick();
+                drawSettings();
+            }
+            if (kDown & KEY_B) {
+                page = 0;
+                playClick();
+                drawMenu();
             }
         }
         else if (kDown & KEY_B)
