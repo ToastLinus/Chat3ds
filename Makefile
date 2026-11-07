@@ -32,6 +32,10 @@ include $(DEVKITARM)/3ds_rules
 #     - <libctru folder>/default_icon.png
 #---------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
+APP_TITLE	:=	Chat3DS
+APP_DESCRIPTION := Dein KI-Chat auf dem Nintendo 3DS
+APP_AUTHOR	:=	ToastLinus
+ICON		:=	icon.png
 BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
