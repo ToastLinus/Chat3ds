@@ -8,7 +8,6 @@ static PrintConsole bottomScreen;
 static int selected = 0;
 static int page = 0;
 
-/* A tiny synthesized menu click. No external sound file is needed. */
 #define CLICK_RATE 32728
 #define CLICK_SAMPLES 1500
 static s16 clickSamples[CLICK_SAMPLES] __attribute__((aligned(0x20)));
@@ -36,22 +35,31 @@ static void playClick(void)
     ndspChnWaveBufAdd(0, &clickWave);
 }
 
+static void line(void)
+{
+    printf("  +--------------------------+\n");
+}
+
 static void drawHeader(void)
 {
     consoleSelect(&topScreen);
     consoleClear();
-    printf("\n");
-    printf("       .--------------.\n");
-    printf("       |  CHAT 3DS    |\n");
-    printf("       '--------------'\n\n");
-    printf("      KI. DIREKT. MOBIL.\n\n");
-    printf("   Dein kleiner KI-Begleiter\n\n");
-    printf("   Ein Chat-Projekt fuer\n");
-    printf("   deinen Nintendo 3DS.\n\n");
+    printf("\n\n");
+    printf("       .----------------.\n");
+    printf("       |                |\n");
+    printf("       |   CHAT 3DS     |\n");
+    printf("       |                |\n");
+    printf("       '----------------'\n\n");
+    printf("       KI. DIREKT. MOBIL.\n\n");
+    printf("   Dein kleiner KI-Begleiter\n");
+    printf("   fuer den Nintendo 3DS.\n\n");
     printf("   ------------------------\n");
-    printf("      URHEBER: TOASTLINUS\n");
+    printf("       MADE BY TOASTLINUS\n");
     printf("   ------------------------\n\n");
-    printf("   Waehle unten einen Punkt.");
+    printf("   Willkommen bei Chat3DS!\n");
+    printf("\n");
+    printf("   Waehle unten, was du tun\n");
+    printf("   moechtest.");
 }
 
 static void drawMenu(void)
@@ -59,15 +67,26 @@ static void drawMenu(void)
     consoleSelect(&bottomScreen);
     consoleClear();
     printf("\n");
-    printf("          HAUPTMENUE\n");
-    printf("   ==========================\n\n");
-    printf("     %s  Chat starten\n\n", selected == 0 ? ">" : " ");
-    printf("     %s  Ueber Chat3DS\n\n", selected == 1 ? ">" : " ");
-    printf("   ==========================\n\n");
-    printf("   HOCH / RUNTER  Auswaehlen\n");
-    printf("   A               Oeffnen\n");
-    printf("   START           Beenden\n\n");
-    printf("          VERSION 0.3");
+    printf("          STARTSEITE\n");
+    printf("\n");
+    line();
+    printf("  |                          |\n");
+    printf("  |       HAUPTMENUE         |\n");
+    printf("  |                          |\n");
+    line();
+    printf("\n");
+    printf("  %s  CHAT STARTEN\n", selected == 0 ? ">>" : "  ");
+    printf("      Mit Chat3DS loslegen\n\n");
+    printf("  %s  UEBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
+    printf("      Infos zum Projekt\n");
+    printf("\n");
+    line();
+    printf("  |  HOCH / RUNTER  AUSWAHL  |\n");
+    printf("  |  A               OEFFNEN|\n");
+    printf("  |  START           ENDE   |\n");
+    line();
+    printf("\n");
+    printf("          VERSION 0.4");
 }
 
 static void drawChatInfo(void)
@@ -75,17 +94,18 @@ static void drawChatInfo(void)
     consoleSelect(&bottomScreen);
     consoleClear();
     printf("\n");
-    printf("          CHAT\n");
-    printf("   ==========================\n\n");
-    printf("   Die Chat-Oberflaeche kommt\n");
-    printf("   als Naechstes.\n\n");
-    printf("   Fuer echte KI-Antworten\n");
-    printf("   fehlt noch ein sicherer\n");
-    printf("   Verbindungsdienst.\n\n");
-    printf("   Deine Zugangsdaten werden\n");
-    printf("   niemals in GitHub-Code\n");
-    printf("   eingebaut.\n\n");
-    printf("   Druecke B fuer das Menue.");
+    printf("          CHAT STARTEN\n\n");
+    line();
+    printf("\n");
+    printf("  Der Chat-Bildschirm wird\n");
+    printf("  gerade vorbereitet.\n\n");
+    printf("  Fuer echte KI-Antworten\n");
+    printf("  brauchen wir noch einen\n");
+    printf("  sicheren Verbindungsdienst.\n\n");
+    printf("  Deine Zugangsdaten werden\n");
+    printf("  nicht in GitHub gespeichert.\n\n");
+    line();
+    printf("\n  B  ZURUECK ZUM HAUPTMENUE");
 }
 
 static void drawAbout(void)
@@ -93,15 +113,18 @@ static void drawAbout(void)
     consoleSelect(&bottomScreen);
     consoleClear();
     printf("\n");
-    printf("        UEBER CHAT3DS\n");
-    printf("   ==========================\n\n");
-    printf("   Chat3DS ist ein Homebrew-\n");
-    printf("   Projekt von ToastLinus.\n\n");
-    printf("   Entwickelt fuer den\n");
-    printf("   Nintendo 3DS.\n\n");
-    printf("   Ziel: Mit einer KI direkt\n");
-    printf("   auf dem 3DS chatten.\n\n");
-    printf("   Druecke B fuer das Menue.");
+    printf("          UEBER CHAT3DS\n\n");
+    line();
+    printf("\n");
+    printf("  Chat3DS ist ein Homebrew-\n");
+    printf("  Projekt von ToastLinus.\n\n");
+    printf("  Entwickelt fuer den\n");
+    printf("  Nintendo 3DS.\n\n");
+    printf("  Unser Ziel: Ein einfacher\n");
+    printf("  KI-Chat direkt auf deiner\n");
+    printf("  Konsole!\n\n");
+    line();
+    printf("\n  B  ZURUECK ZUM HAUPTMENUE");
 }
 
 int main(int argc, char* argv[])
