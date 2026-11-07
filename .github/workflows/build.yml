@@ -108,3 +108,21 @@ jobs:
           body: Automatically built Chat3DS CIA. Download Chat3ds.cia and install it with FBI.
           files: Chat3ds.cia
           prerelease: true
+
+      - name: Keep only the newest Chat3DS release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const currentTag = `chat3ds-build-${context.runNumber}`;
+            const { owner, repo } = context.repo;
+            const releases = await github.paginate(github.rest.repos.listReleases, { owner, repo, per_page: 100 });
+            for (const release of releases) {
+              if (release.tag_name.startsWith('chat3ds-build-') && release.tag_name !== currentTag) {
+                await github.rest.repos.deleteRelease({ owner, repo, release_id: release.id });
+                try {
+                  await github.rest.git.deleteRef({ owner, repo, ref: `tags/${release.tag_name}` });
+                } catch (error) {
+                  core.info(`Could not remove tag ${release.tag_name}: ${error.message}`);
+                }
+              }
+            }
