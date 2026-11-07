@@ -65,15 +65,15 @@ static void drawHeader(void)
     printf(WHITE);
     printf("       KI. DIREKT. MOBIL.\n\n");
     printf("   Dein kleiner KI-Begleiter\n");
-    printf("   fuer den Nintendo 3DS.\n\n");
+    printf("   für den Nintendo 3DS.\n\n");
     printf(TURQUOISE);
     printf("  --------------------------\n");
     printf("       MADE BY TOASTLINUS\n");
     printf("  --------------------------\n\n");
     printf(WHITE);
     printf("   Willkommen bei Chat3DS!\n\n");
-    printf("   Waehle unten, was du tun\n");
-    printf("   moechtest.");
+    printf("   Wähle unten, was du tun\n");
+    printf("   möchtest.");
 }
 
 static void drawMenu(void)
@@ -85,7 +85,7 @@ static void drawMenu(void)
     line();
     printf(TURQUOISE);
     printf("  |                          |\n");
-    printf("  |       HAUPTMENUE         |\n");
+    printf("  |       HAUPTMENÜ         |\n");
     printf("  |                          |\n");
     line();
     printf("\n");
@@ -94,13 +94,13 @@ static void drawMenu(void)
     printf(WHITE);
     printf("      Mit Chat3DS loslegen\n\n");
     printf(selected == 1 ? TURQUOISE : WHITE);
-    printf("  %s  UEBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
+    printf("  %s  ÜBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
     printf(WHITE);
     printf("      Infos zum Projekt\n\n");
     line();
     printf(TURQUOISE);
     printf("  |  HOCH / RUNTER  AUSWAHL  |\n");
-    printf("  |  A               OEFFNEN|\n");
+    printf("  |  A               ÖFFNEN|\n");
     printf("  |  START           ENDE   |\n");
     line();
     printf(TURQUOISE);
@@ -124,7 +124,7 @@ static void drawChatInfo(void)
     printf("  nicht in GitHub gespeichert.\n\n");
     line();
     printf(TURQUOISE);
-    printf("\n  B  ZURUECK ZUM HAUPTMENUE");
+    printf("\n  B  ZURÜCK ZUM HAUPTMENÜ");
     printf(WHITE);
 }
 
@@ -132,19 +132,19 @@ static void drawAbout(void)
 {
     beginScreen(&bottomScreen);
     printf(TURQUOISE);
-    printf("\n          UEBER CHAT3DS\n\n");
+    printf("\n          ÜBER CHAT3DS\n\n");
     line();
     printf(WHITE);
     printf("\n  Chat3DS ist ein Homebrew-\n");
     printf("  Projekt von ToastLinus.\n\n");
-    printf("  Entwickelt fuer den\n");
+    printf("  Entwickelt für den\n");
     printf("  Nintendo 3DS.\n\n");
     printf("  Unser Ziel: Ein einfacher\n");
     printf("  KI-Chat direkt auf deiner\n");
     printf("  Konsole!\n\n");
     line();
     printf(TURQUOISE);
-    printf("\n  B  ZURUECK ZUM HAUPTMENUE");
+    printf("\n  B  ZURÜCK ZUM HAUPTMENÜ");
     printf(WHITE);
 }
 
