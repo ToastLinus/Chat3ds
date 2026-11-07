@@ -9,8 +9,8 @@ TOPDIR ?= $(CURDIR)
 include $(DEVKITARM)/3ds_rules
 
 TARGET := MiniOpenWorld3DS
-APP_TITLE := Mini World 3D
-APP_DESCRIPTION := Erkunde eine kleine offene Welt
+APP_TITLE := CITY LIFE 3D
+APP_DESCRIPTION := Open-World-Stadtspiel fuer Nintendo 3DS
 APP_AUTHOR := ToastLinus
 ICON := icon.png
 BUILD := build
