@@ -186,7 +186,7 @@ static void drawProviderInfo(void)
 {
     beginScreen(&bottomScreen);
     printf("\n" TURQUOISE "          %s\n\n", tr("KI-ANBIETER", "AI PROVIDERS"));
-    line();
+    printf("\n");
     printf(WHITE "\n  %s\n\n", tr("Noch ist kein KI-Dienst", "No AI service is connected"));
     printf("  %s\n", tr("mit Chat3DS verbunden.", "to Chat3DS yet."));
     printf("  %s\n\n", tr("ChatGPT ist als erster", "ChatGPT is planned as the"));
@@ -196,7 +196,7 @@ static void drawProviderInfo(void)
     printf("  %s\n", tr("Die Auswahl wird erst", "Provider selection will be"));
     printf("  %s\n", tr("freigeschaltet, wenn die", "enabled once the secure"));
     printf("  %s\n\n", tr("sichere Verbindung steht.", "connection is ready."));
-    line();
+    printf("\n");
     printf(TURQUOISE "\n  B  %s" WHITE, tr("ZURUECK", "BACK"));
 }
 
