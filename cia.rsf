@@ -1,0 +1,17 @@
+BasicInfo:
+  Title: "Chat3DS"
+  CompanyCode: "00"
+  ProductCode: "CTAP"
+  ContentType: Application
+  Logo: Homebrew
+
+TitleInfo:
+  UniqueId: 0xF00BA
+  Category: Application
+
+Option:
+  UseOnSD: true
+  FreeProductCode: true
+  EnableCrypt: false
+  EnableCompress: true
+  MediaFootPadding: false
