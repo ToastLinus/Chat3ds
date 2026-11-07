@@ -131,7 +131,7 @@ static void drawMenu(void)
     printf("  |  A: %s  |\n", tr("OEFFNEN", "OPEN"));
     printf("  |  START: %s  |\n", tr("BEENDEN", "EXIT"));
     line();
-    printf(TURQUOISE "\n          VERSION 0.7" WHITE);
+    printf(TURQUOISE "\n          VERSION 0.8" WHITE);
 }
 
 static void drawChatInfo(void)
