@@ -1,8 +1,8 @@
-# Mini World 3D (Nintendo 3DS)
+# CITY LIFE 3D (Nintendo 3DS)
 
-Ein kleines, kostenloses Open-World-Erkundungsspiel für Nintendo 3DS.
+Ein kostenloses Open-World-Stadtspiel von ToastLinus, inspiriert vom Spielgefühl klassischer GTA-Teile. für Nintendo 3DS.
 
-## Aktueller Prototyp
+**Autor:** ToastLinus  \n**Plattform:** Nintendo 3DS / 3DS XL  \n\n## Aktueller Prototyp
 - Top-down-Stadt mit Straßen, Häusern, Bäumen und Park
 - Figur zu Fuß bewegen
 - Mit A zwischen Fuß- und Auto-Modus wechseln
