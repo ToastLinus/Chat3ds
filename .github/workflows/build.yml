@@ -1,0 +1,30 @@
+
+name: Build Chat3DS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: devkitpro/devkitarm
+      options: --user 1001
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Compile Chat3DS
+        run: make
+
+      - name: Upload 3DS files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chat3DS-Build
+          path: |
+            Chat3DS.3dsx
+            Chat3DS.elf
+            Chat3DS.smdh
