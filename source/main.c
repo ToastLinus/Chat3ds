@@ -62,9 +62,9 @@ static void drawLogo(void)
     if (!fb || width != 240 || height != 400) return;
     const int stride = height;
     /* Turquoise rounded speech bubble, navy dots and a tiny sparkle. */
-    for (int x = 324; x <= 378; x++) {
+    for (int x = 184; x <= 232; x++) {
         for (int y = 18; y <= 64; y++) {
-            int dx = x < 336 ? 336-x : (x > 366 ? x-366 : 0);
+            int dx = x < 196 ? 196-x : (x > 220 ? x-220 : 0);
             int dy = y < 30 ? 30-y : (y > 52 ? y-52 : 0);
             if (dx*dx + dy*dy <= 12*12) {
                 int p = (x * stride + y) * 3;
@@ -72,14 +72,14 @@ static void drawLogo(void)
             }
         }
     }
-    for (int x = 330; x <= 348; x++)
+    for (int x = 190; x <= 208; x++)
         for (int y = 54; y <= 70; y++)
-            if (y >= 70 - (x-330)) {
+            if (y >= 70 - (x-190)) {
                 int p = (x * stride + y) * 3;
                 fb[p] = 230; fb[p+1] = 205; fb[p+2] = 44;
             }
     for (int i = 0; i < 3; i++) {
-        int cx = 340 + i*11, cy = 41;
+        int cx = 200 + i*9, cy = 41;
         for (int x = -3; x <= 3; x++)
             for (int y = -3; y <= 3; y++)
                 if (x*x + y*y <= 9) {
@@ -230,9 +230,9 @@ int main(int argc, char* argv[])
             int oldSelected = selected;
 
             if (kDown & KEY_UP)
-                selected = (selected + 1) % 3;
+                selected = (selected + 2) % 3;
             if (kDown & KEY_DOWN)
-                selected = (selected + 1) % 2;
+                selected = (selected + 1) % 3;
 
             if (selected != oldSelected) {
                 playClick();
