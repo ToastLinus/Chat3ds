@@ -171,15 +171,15 @@ static void enterChatMessage(void)
     swkbdInit(&keyboard, SWKBD_TYPE_NORMAL, 2, -1);
     swkbdSetHintText(&keyboard, tr("Nachricht eingeben...", "Type a message..."));
     swkbdInputText(&keyboard, input, sizeof(input));
-    if (input[0] != '\\0' && chatMessageCount < 6) {
+    if (input[0] != '\0' && chatMessageCount < 6) {
         strncpy(chatMessages[chatMessageCount], input, sizeof(chatMessages[0]) - 1);
-        chatMessages[chatMessageCount][sizeof(chatMessages[0]) - 1] = '\\0';
+        chatMessages[chatMessageCount][sizeof(chatMessages[0]) - 1] = '\0';
         chatMessageCount++;
-    } else if (input[0] != '\\0') {
+    } else if (input[0] != '\0') {
         for (int i = 1; i < 6; i++)
             memcpy(chatMessages[i-1], chatMessages[i], sizeof(chatMessages[0]));
         strncpy(chatMessages[5], input, sizeof(chatMessages[5]) - 1);
-        chatMessages[5][sizeof(chatMessages[5]) - 1] = '\\0';
+        chatMessages[5][sizeof(chatMessages[5]) - 1] = '\0';
     }
 }
 static void drawProviderInfo(void)
