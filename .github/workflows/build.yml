@@ -25,6 +25,6 @@ jobs:
         with:
           name: Chat3DS-Build
           path: |
-            Chat3DS.3dsx
-            Chat3DS.elf
-            Chat3DS.smdh
+            build/Chat3DS.3dsx
+            build/Chat3DS.elf
+            build/Chat3DS.smdh
