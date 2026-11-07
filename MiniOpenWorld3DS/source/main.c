@@ -12,7 +12,7 @@ typedef struct { u8 r, g, b; } Color;
 typedef struct { int x, y, w, h; Color color; } Building;
 
 static u8 *framebuffer;
-static int fb_width, fb_height;
+static u16 fb_width, fb_height;
 static int player_x = 250;
 static int player_y = 250;
 static int in_car = 0;
@@ -23,8 +23,6 @@ static const int mission_y = 700;
 static const Color GRASS = {75, 145, 75};
 static const Color ROAD = {76, 79, 85};
 static const Color ROAD_LINE = {235, 218, 130};
-static const Color HOUSE_A = {204, 153, 112};
-static const Color HOUSE_B = {186, 194, 205};
 static const Color ROOF = {105, 65, 57};
 static const Color TREE = {35, 100, 52};
 static const Color PLAYER = {245, 65, 70};
@@ -42,9 +40,9 @@ static const Building buildings[] = {
 };
 
 static void put_pixel(int x, int y, Color c) {
-    if (!framebuffer || x < 0 || y < 0 || x >= fb_width || y >= fb_height) return;
-    /* libctru's BGR8 framebuffer is column-major. */
-    unsigned int i = ((unsigned int)x * (unsigned int)fb_height + (unsigned int)y) * 3;
+    if (!framebuffer || x < 0 || y < 0 || x >= SCREEN_W || y >= SCREEN_H) return;
+    /* The 3DS top framebuffer is stored column-major: 240 pixels per column. */
+    unsigned int i = ((unsigned int)x * (unsigned int)fb_width + (unsigned int)y) * 3;
     framebuffer[i] = c.b;
     framebuffer[i + 1] = c.g;
     framebuffer[i + 2] = c.r;
@@ -83,19 +81,16 @@ static void draw_world(void) {
     if (cam_x > WORLD_W - SCREEN_W) cam_x = WORLD_W - SCREEN_W;
     if (cam_y > WORLD_H - SCREEN_H) cam_y = WORLD_H - SCREEN_H;
 
-    /* Main streets and their simple sidewalks. */
     world_rect(0, 390, WORLD_W, 100, cam_x, cam_y, (Color){145,145,135});
     world_rect(0, 400, WORLD_W, 80, cam_x, cam_y, ROAD);
     world_rect(470, 0, 100, WORLD_H, cam_x, cam_y, (Color){145,145,135});
     world_rect(480, 0, 80, WORLD_H, cam_x, cam_y, ROAD);
 
-    /* Dashed road markings. */
     for (int x = 20; x < WORLD_W; x += 80)
         world_rect(x, 438, 38, 4, cam_x, cam_y, ROAD_LINE);
     for (int y = 20; y < WORLD_H; y += 80)
         world_rect(518, y, 4, 38, cam_x, cam_y, ROAD_LINE);
 
-    /* Buildings with small roof caps. */
     for (unsigned int i = 0; i < sizeof(buildings)/sizeof(buildings[0]); i++) {
         const Building *b = &buildings[i];
         world_rect(b->x, b->y, b->w, b->h, cam_x, cam_y, b->color);
@@ -105,13 +100,11 @@ static void draw_world(void) {
         world_rect(b->x + b->w/2 - 9, b->y + b->h - 28, 18, 28, cam_x, cam_y, (Color){95,65,45});
     }
 
-    /* Park area and trees. */
     world_rect(720, 650, 250, 190, cam_x, cam_y, (Color){65,135,70});
     for (int i = 0; i < 8; i++)
         draw_tree(750 + (i % 4) * 55, 675 + (i / 4) * 75, cam_x, cam_y);
     world_rect(mission_x - 10, mission_y - 10, 20, 20, cam_x, cam_y, (Color){250,220,70});
 
-    /* Player or car marker. */
     int sx = player_x - cam_x;
     int sy = player_y - cam_y;
     if (in_car) {
@@ -124,7 +117,6 @@ static void draw_world(void) {
         fill_rect(sx - 2, sy - 7, 5, 4, (Color){245,205,165});
     }
 
-    /* Small title strip. */
     fill_rect(0, 0, SCREEN_W, 15, (Color){20,35,48});
     gfxFlushBuffers();
     gfxSwapBuffers();
@@ -152,8 +144,6 @@ static void draw_hud(void) {
 int main(void) {
     gfxInitDefault();
     consoleInit(GFX_BOTTOM, NULL);
-    hidSetRepeatDelay(18);
-    hidSetRepeatInterval(3);
 
     while (aptMainLoop()) {
         hidScanInput();
