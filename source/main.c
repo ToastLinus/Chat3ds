@@ -60,7 +60,7 @@ static void drawHeader(void)
     printf(TURQUOISE);
     printf("                                      .------.\n");
     printf("                                      | o o o|\n");
-    printf("                                      '---\\\\__\\n");
+    printf("                                      '------'\n");
     printf("\n");
     printf("  CHAT 3DS\n\n");
     printf(WHITE);
