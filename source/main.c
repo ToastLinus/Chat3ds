@@ -57,9 +57,13 @@ static void beginScreen(PrintConsole *screen)
     consoleClear();
 }
 
-static void line(void)
+static void logoPixel(u8 *fb, int stride, int x, int y, u8 red, u8 green, u8 blue)
 {
-    printf(TURQUOISE "  +--------------------------+\n" WHITE);
+    if (x < 0 || x >= 240 || y < 0 || y >= 400) return;
+    int p = (x * stride + y) * 3;
+    fb[p] = blue;
+    fb[p+1] = green;
+    fb[p+2] = red;
 }
 
 static void drawLogo(void)
@@ -68,31 +72,46 @@ static void drawLogo(void)
     u8 *fb = gfxGetFramebuffer(GFX_TOP, GFX_LEFT, &width, &height);
     if (!fb || width != 240 || height != 400) return;
     const int stride = height;
-    for (int x = 184; x <= 232; x++) {
-        for (int y = 18; y <= 64; y++) {
-            int dx = x < 196 ? 196-x : (x > 220 ? x-220 : 0);
-            int dy = y < 30 ? 30-y : (y > 52 ? y-52 : 0);
-            if (dx*dx + dy*dy <= 12*12) {
-                int p = (x * stride + y) * 3;
-                fb[p] = 230; fb[p+1] = 205; fb[p+2] = 44;
-            }
+
+    /* Rounded turquoise speech bubble with a dark inset. */
+    for (int x = 176; x <= 234; x++) {
+        for (int y = 14; y <= 72; y++) {
+            int dx = x < 190 ? 190-x : (x > 220 ? x-220 : 0);
+            int dy = y < 28 ? 28-y : (y > 58 ? y-58 : 0);
+            if (dx*dx + dy*dy <= 14*14)
+                logoPixel(fb, stride, x, y, 35, 220, 225);
         }
     }
-    for (int x = 190; x <= 208; x++)
-        for (int y = 54; y <= 70; y++)
-            if (y >= 70 - (x-190)) {
-                int p = (x * stride + y) * 3;
-                fb[p] = 230; fb[p+1] = 205; fb[p+2] = 44;
-            }
+    for (int x = 188; x <= 211; x++)
+        for (int y = 56; y <= 77; y++)
+            if (y >= 56 + (x-188)/2 && y >= 67 - (x-188))
+                logoPixel(fb, stride, x, y, 35, 220, 225);
+
+    for (int x = 181; x <= 229; x++) {
+        for (int y = 19; y <= 67; y++) {
+            int dx = x < 193 ? 193-x : (x > 217 ? x-217 : 0);
+            int dy = y < 31 ? 31-y : (y > 55 ? y-55 : 0);
+            if (dx*dx + dy*dy <= 12*12)
+                logoPixel(fb, stride, x, y, 13, 35, 72);
+        }
+    }
     for (int i = 0; i < 3; i++) {
-        int cx = 200 + i*9, cy = 41;
+        int cx = 194 + i*10, cy = 43;
         for (int x = -3; x <= 3; x++)
             for (int y = -3; y <= 3; y++)
-                if (x*x + y*y <= 9) {
-                    int p = ((cx+x) * stride + cy+y) * 3;
-                    fb[p] = 68; fb[p+1] = 29; fb[p+2] = 7;
-                }
+                if (x*x + y*y <= 9)
+                    logoPixel(fb, stride, cx+x, cy+y, 235, 250, 255);
     }
+    /* Small highlight in the corner. */
+    logoPixel(fb, stride, 224, 25, 255, 255, 255);
+    logoPixel(fb, stride, 225, 24, 255, 255, 255);
+}
+
+static void menuRow(int active, const char *label, const char *detail)
+{
+    if (active) printf("\x1b[46m\x1b[30m  > %s  \x1b[0m" BG_BLUE TURQUOISE "\n", label);
+    else printf("    %s\n", label);
+    printf(WHITE "      %s\n\n" TURQUOISE, detail);
 }
 
 static void drawHeader(void)
@@ -102,9 +121,7 @@ static void drawHeader(void)
     printf("       %s\n\n", tr("KI. DIREKT. MOBIL.", "AI. DIRECT. MOBILE."));
     printf("   %s\n", tr("Dein kleiner KI-Begleiter", "Your little AI companion"));
     printf("   %s\n\n", tr("fuer den Nintendo 3DS.", "for the Nintendo 3DS."));
-    printf(TURQUOISE "  --------------------------\n");
-    printf("       MADE BY TOASTLINUS\n");
-    printf("  --------------------------\n\n" WHITE);
+    printf(TURQUOISE "       MADE BY TOASTLINUS\n\n" WHITE);
     printf("   %s\n\n", tr("Willkommen bei Chat3DS!", "Welcome to Chat3DS!"));
     printf("   %s\n", tr("Waehle unten, was du tun", "Choose below what you"));
     printf("   %s", tr("moechtest.", "would like to do."));
@@ -114,46 +131,36 @@ static void drawHeader(void)
 static void drawMenu(void)
 {
     beginScreen(&bottomScreen);
-    printf("\n" TURQUOISE "          %s\n\n", tr("STARTSEITE", "HOME"));
-    line();
-    printf(TURQUOISE "  |                          |\n");
-    printf("  |       %s       |\n", tr("HAUPTMENUE", "MAIN MENU"));
-    printf("  |                          |\n");
-    line();
-    printf("\n%s  %s\n", selected == 0 ? TURQUOISE ">>" : WHITE "  ", tr("CHAT STARTEN", "START CHAT"));
-    printf(WHITE "      %s\n\n", tr("Mit Chat3DS loslegen", "Open Chat3DS"));
-    printf("%s  %s\n", selected == 1 ? TURQUOISE ">>" : WHITE "  ", tr("UEBER CHAT3DS", "ABOUT CHAT3DS"));
-    printf(WHITE "      %s\n\n", tr("Infos zum Projekt", "Project information"));
-    printf("%s  %s\n", selected == 2 ? TURQUOISE ">>" : WHITE "  ", tr("EINSTELLUNGEN", "SETTINGS"));
-    printf(WHITE "      %s\n\n", tr("Sprache und Ton", "Language and sound"));
-    line();
-    printf(TURQUOISE "  |  %s  |\n", tr("HOCH/RUNTER: AUSWAHL", "UP/DOWN: SELECT"));
-    printf("  |  A: %s  |\n", tr("OEFFNEN", "OPEN"));
-    printf("  |  START: %s  |\n", tr("BEENDEN", "EXIT"));
-    line();
-    printf(TURQUOISE "\n          VERSION 0.8" WHITE);
+    printf("\n" TURQUOISE "          %s\n\n", tr("CHAT3DS  /  START", "CHAT3DS  /  HOME"));
+    menuRow(selected == 0, tr("CHAT STARTEN", "START CHAT"),
+            tr("Nachrichten schreiben", "Write messages"));
+    menuRow(selected == 1, tr("UEBER CHAT3DS", "ABOUT CHAT3DS"),
+            tr("Infos zum Projekt", "Project information"));
+    menuRow(selected == 2, tr("EINSTELLUNGEN", "SETTINGS"),
+            tr("Sprache und Menuton", "Language and menu sound"));
+    printf(WHITE "  %s\n", tr("HOCH / RUNTER   AUSWAEHLEN", "UP / DOWN   SELECT"));
+    printf("  A               %s\n", tr("OEFFNEN", "OPEN"));
+    printf("  START           %s\n", tr("BEENDEN", "EXIT"));
+    printf(TURQUOISE "\n  CHAT3DS 0.8" WHITE);
 }
 
 static void drawChatInfo(void)
 {
     beginScreen(&bottomScreen);
     printf("\n" TURQUOISE "          %s\n\n", tr("CHAT3DS", "CHAT3DS"));
-    line();
-    printf(WHITE "\n  %s\n", tr("VERLAUF", "CHAT HISTORY"));
+    printf(WHITE "  %s\n", tr("DEINE NACHRICHTEN", "YOUR MESSAGES"));
     if (chatMessageCount == 0) {
-        printf("  %s\n\n", tr("Noch keine Nachrichten.", "No messages yet."));
+        printf("  %s\n", tr("Noch ist es ganz ruhig.", "It is quiet here for now."));
     } else {
         int first = chatMessageCount > 4 ? chatMessageCount - 4 : 0;
-        for (int i = first; i < chatMessageCount; i++) {
-            printf(TURQUOISE "  DU: " WHITE "%s\n", chatMessages[i]);
-        }
-        printf("\n");
+        for (int i = first; i < chatMessageCount; i++)
+            printf(TURQUOISE "  > " WHITE "%s\n", chatMessages[i]);
     }
-    line();
-    printf(TURQUOISE "\n  %s\n", tr("STATUS: OFFLINE", "STATUS: OFFLINE"));
-    printf(WHITE "  %s\n", tr("KI-Verbindung noch nicht", "AI connection is not"));
-    printf("  %s\n\n", tr("eingerichtet.", "configured yet."));
-    printf(TURQUOISE "  A  %s\n", tr("NACHRICHT SCHREIBEN", "WRITE MESSAGE"));
+    printf("\n" TURQUOISE "  ----------------------------\n");
+    printf("  %s\n", tr("KI-STATUS: NOCH OFFLINE", "AI STATUS: NOT CONNECTED"));
+    printf(WHITE "  %s\n\n", tr("Deine Nachricht wird lokal", "Your message is stored"));
+    printf("  %s\n", tr("angezeigt, noch nicht gesendet.", "locally, not sent yet."));
+    printf(TURQUOISE "\n  A  %s\n", tr("NACHRICHT SCHREIBEN", "WRITE MESSAGE"));
     printf("  B  %s" WHITE, tr("ZURUECK", "BACK"));
 }
 
@@ -197,41 +204,39 @@ static void drawSettings(void)
 {
     beginScreen(&bottomScreen);
     printf("\n" TURQUOISE "          %s\n\n", tr("EINSTELLUNGEN", "SETTINGS"));
-    line();
-    printf("%s  %s: %s\n", settingSelected == 0 ? TURQUOISE ">>" : WHITE "  ",
-           tr("MENUTON", "MENU SOUND"), soundEnabled ? tr("EIN", "ON") : tr("AUS", "OFF"));
-    printf("%s  %s: %s\n\n", settingSelected == 1 ? TURQUOISE ">>" : WHITE "  ",
-           tr("SPRACHE", "LANGUAGE"), english ? "English" : "Deutsch");
-    printf("%s  %s\n", settingSelected == 2 ? TURQUOISE ">>" : WHITE "  ",
-           tr("KI-ANBIETER", "AI PROVIDER"));
-    printf(WHITE "      %s\n", tr("Noch nicht verbunden", "Not connected yet"));
-    printf("      %s\n\n", tr("ChatGPT vorbereitet; weitere", "ChatGPT planned; more"));
-    printf("      %s\n", tr("Anbieter spaeter moeglich.", "providers may follow later."));
-    line();
-    printf(TURQUOISE "\n  %s\n", tr("HOCH/RUNTER: AUSWAHL", "UP/DOWN: SELECT"));
-    printf("  A  %s\n", tr("AENDERN", "CHANGE"));
-    printf("  B  %s" WHITE, tr("ZURUECK", "BACK"));
+    if (settingSelected == 0) printf("\x1b[46m\x1b[30m  > %s: %s  \x1b[0m" BG_BLUE TURQUOISE "\n",
+        tr("MENUTON", "MENU SOUND"), soundEnabled ? tr("EIN", "ON") : tr("AUS", "OFF"));
+    else printf("    %s: %s\n", tr("MENUTON", "MENU SOUND"), soundEnabled ? tr("EIN", "ON") : tr("AUS", "OFF"));
+    if (settingSelected == 1) printf("\x1b[46m\x1b[30m  > %s: %s  \x1b[0m" BG_BLUE TURQUOISE "\n",
+        tr("SPRACHE", "LANGUAGE"), english ? "English" : "Deutsch");
+    else printf("    %s: %s\n", tr("SPRACHE", "LANGUAGE"), english ? "English" : "Deutsch");
+    if (settingSelected == 2) printf("\x1b[46m\x1b[30m  > %s  \x1b[0m" BG_BLUE TURQUOISE "\n",
+        tr("KI-ANBIETER", "AI PROVIDER"));
+    else printf("    %s\n", tr("KI-ANBIETER", "AI PROVIDER"));
+    printf(WHITE "      %s\n\n", tr("Noch nicht verbunden", "Not connected yet"));
+    printf(TURQUOISE "  %s\n", tr("HOCH / RUNTER   AUSWAEHLEN", "UP / DOWN   SELECT"));
+    printf("  A               %s\n", tr("AENDERN", "CHANGE"));
+    printf("  B               %s" WHITE, tr("ZURUECK", "BACK"));
 }
 
 static void drawAbout(void)
 {
     beginScreen(&bottomScreen);
     printf("\n" TURQUOISE "          %s\n\n", tr("UEBER CHAT3DS", "ABOUT CHAT3DS"));
-    line();
-    printf(WHITE "\n  Chat3DS %s\n", tr("ist ein Homebrew-", "is a homebrew"));
-    printf("  %s\n\n", tr("Projekt von ToastLinus.", "project by ToastLinus."));
+    printf(WHITE "  Chat3DS %s\n", tr("ist ein Homebrew-Projekt", "is a homebrew project"));
+    printf("  %s\n\n", tr("von ToastLinus.", "by ToastLinus."));
     printf("  %s\n", tr("Entwickelt fuer den", "Made for the"));
     printf("  Nintendo 3DS.\n\n");
-    printf("  %s\n", tr("Unser Ziel: Ein einfacher", "Our goal: a simple AI"));
-    printf("  %s\n", tr("KI-Chat direkt auf deiner", "chat directly on your"));
-    printf("  %s\n", tr("Konsole!", "console!"));
-    line();
-    printf(TURQUOISE "\n  B  %s" WHITE, tr("ZURUECK ZUM HAUPTMENUE", "BACK TO MAIN MENU"));
+    printf(TURQUOISE "  %s\n", tr("UNSER ZIEL", "OUR GOAL"));
+    printf(WHITE "  %s\n", tr("Ein einfacher KI-Chat", "A simple AI chat"));
+    printf("  %s\n", tr("direkt auf deiner Konsole.", "directly on your console."));
+    printf(TURQUOISE "\n  B  %s" WHITE, tr("ZURUECK", "BACK"));
 }
 
 int main(int argc, char* argv[])
 {
     gfxInitDefault();
+    gfxSetDoubleBuffering(GFX_TOP, false);
     consoleInit(GFX_TOP, &topScreen);
     consoleInit(GFX_BOTTOM, &bottomScreen);
     ndspInit();
