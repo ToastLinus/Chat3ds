@@ -58,10 +58,11 @@ static void drawHeader(void)
     beginScreen(&topScreen);
     printf("\n");
     printf(TURQUOISE);
-    printf("  .----------------.\n");
-    printf("  |  CHAT 3DS      |\n");
-    printf("  |  [  Sprechblase]|\n");
-    printf("  '----------------'\n\n");
+    printf("                                      .------.\n");
+    printf("                                      | o o o|\n");
+    printf("                                      '---\\\\__\\n");
+    printf("\n");
+    printf("  CHAT 3DS\n\n");
     printf(WHITE);
     printf("       KI. DIREKT. MOBIL.\n\n");
     printf("   Dein kleiner KI-Begleiter\n");
@@ -117,7 +118,7 @@ static void drawChatInfo(void)
     printf(WHITE);
     printf("\n  Der Chat-Bildschirm wird\n");
     printf("  gerade vorbereitet.\n\n");
-    printf("  Fuer echte KI-Antworten\n");
+    printf("  Für echte KI-Antworten\n");
     printf("  brauchen wir noch einen\n");
     printf("  sicheren Verbindungsdienst.\n\n");
     printf("  Deine Zugangsdaten werden\n");
