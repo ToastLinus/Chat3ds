@@ -10,6 +10,8 @@ static int page = 0;
 static int soundEnabled = 1;
 static int english = 0;
 static int settingSelected = 0;
+static char chatMessages[6][96];
+static int chatMessageCount = 0;
 
 #define BG_BLUE "\x1b[44m"
 #define TURQUOISE "\x1b[36m"
@@ -135,19 +137,44 @@ static void drawMenu(void)
 static void drawChatInfo(void)
 {
     beginScreen(&bottomScreen);
-    printf("\n" TURQUOISE "          %s\n\n", tr("CHAT STARTEN", "START CHAT"));
+    printf("\n" TURQUOISE "          %s\n\n", tr("CHAT3DS", "CHAT3DS"));
     line();
-    printf(WHITE "\n  %s\n", tr("Der Chat-Bildschirm wird", "The chat screen is being"));
-    printf("  %s\n\n", tr("gerade vorbereitet.", "prepared."));
-    printf("  %s\n", tr("Fuer echte KI-Antworten", "Real AI replies need a"));
-    printf("  %s\n", tr("brauchen wir noch einen", "secure connection service."));
-    printf("  %s\n\n", tr("sicheren Verbindungsdienst.", ""));
-    printf("  %s\n", tr("Deine Zugangsdaten werden", "Your access details will"));
-    printf("  %s\n\n", tr("nicht in GitHub gespeichert.", "not be stored in GitHub."));
+    printf(WHITE "\n  %s\n", tr("VERLAUF", "CHAT HISTORY"));
+    if (chatMessageCount == 0) {
+        printf("  %s\n\n", tr("Noch keine Nachrichten.", "No messages yet."));
+    } else {
+        int first = chatMessageCount > 4 ? chatMessageCount - 4 : 0;
+        for (int i = first; i < chatMessageCount; i++) {
+            printf(TURQUOISE "  DU: " WHITE "%s\n", chatMessages[i]);
+        }
+        printf("\n");
+    }
     line();
-    printf(TURQUOISE "\n  B  %s" WHITE, tr("ZURUECK ZUM HAUPTMENUE", "BACK TO MAIN MENU"));
+    printf(TURQUOISE "\n  %s\n", tr("STATUS: OFFLINE", "STATUS: OFFLINE"));
+    printf(WHITE "  %s\n", tr("KI-Verbindung noch nicht", "AI connection is not"));
+    printf("  %s\n\n", tr("eingerichtet.", "configured yet."));
+    printf(TURQUOISE "  A  %s\n", tr("NACHRICHT SCHREIBEN", "WRITE MESSAGE"));
+    printf("  B  %s" WHITE, tr("ZURUECK", "BACK"));
 }
 
+static void enterChatMessage(void)
+{
+    SwkbdState keyboard;
+    char input[96] = {0};
+    swkbdInit(&keyboard, SWKBD_TYPE_NORMAL, 2, -1);
+    swkbdSetHintText(&keyboard, tr("Nachricht eingeben...", "Type a message..."));
+    swkbdInputText(&keyboard, input, sizeof(input));
+    if (input[0] != '\\0' && chatMessageCount < 6) {
+        strncpy(chatMessages[chatMessageCount], input, sizeof(chatMessages[0]) - 1);
+        chatMessages[chatMessageCount][sizeof(chatMessages[0]) - 1] = '\\0';
+        chatMessageCount++;
+    } else if (input[0] != '\\0') {
+        for (int i = 1; i < 6; i++)
+            memcpy(chatMessages[i-1], chatMessages[i], sizeof(chatMessages[0]));
+        strncpy(chatMessages[5], input, sizeof(chatMessages[5]) - 1);
+        chatMessages[5][sizeof(chatMessages[5]) - 1] = '\\0';
+    }
+}
 static void drawProviderInfo(void)
 {
     beginScreen(&bottomScreen);
@@ -262,6 +289,18 @@ int main(int argc, char* argv[])
             if (kDown & KEY_B) {
                 page = 0;
                 playClick();
+                drawMenu();
+            }
+        }
+        else if (page == 1)
+        {
+            if (kDown & KEY_A) {
+                enterChatMessage();
+                drawChatInfo();
+            }
+            if (kDown & KEY_B) {
+                playClick();
+                page = 0;
                 drawMenu();
             }
         }
