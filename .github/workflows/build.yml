@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -67,3 +70,12 @@ jobs:
             Chat3ds.cia
             Chat3ds.elf
             Chat3ds.smdh
+
+      - name: Publish CIA as GitHub Release download
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: chat3ds-build-${{ github.run_number }}
+          name: Chat3DS Build ${{ github.run_number }}
+          body: Automatically built Chat3DS CIA. Download Chat3ds.cia and install it with FBI.
+          files: Chat3ds.cia
+          prerelease: true
