@@ -23,7 +23,7 @@ ARCH := -march=armv6k -mtune=mpcore -mfloat-abi=hard
 CFLAGS := -g -Wall -Wextra -O2 -mword-relocations -ffunction-sections $(ARCH) $(INCLUDE) -D__3DS__
 CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS := -g $(ARCH)
-LDFLAGS = -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*).map
+LDFLAGS = -specs=3dsx.specs -g -Wl,-Map,$(notdir $*).map
 LIBS := -lctru -lm
 LIBDIRS := $(CTRULIB)
 
