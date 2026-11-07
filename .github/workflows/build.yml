@@ -19,6 +19,19 @@ jobs:
       - name: Compile Chat3DS
         run: make
 
+      - name: Install makerom
+        run: |
+          wget -q https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.19.0/makerom-v0.19.0-ubuntu_x86_64.zip -O /tmp/makerom.zip
+          mkdir -p /tmp/makerom
+          unzip -q /tmp/makerom.zip -d /tmp/makerom
+          find /tmp/makerom -type f -name makerom -exec install -m 755 {} /usr/local/bin/makerom \;
+          makerom --help
+
+      - name: Package installable CIA
+        run: |
+          makerom -f cia -o Chat3ds.cia -target t -elf Chat3ds.elf -desc app:4 -exefslogo
+          test -s Chat3ds.cia
+
       - name: Upload 3DS files
         uses: actions/upload-artifact@v4
         with:
@@ -26,5 +39,6 @@ jobs:
           if-no-files-found: error
           path: |
             Chat3ds.3dsx
+            Chat3ds.cia
             Chat3ds.elf
             Chat3ds.smdh
