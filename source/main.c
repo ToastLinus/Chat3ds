@@ -8,6 +8,10 @@ static PrintConsole bottomScreen;
 static int selected = 0;
 static int page = 0;
 
+#define BG_BLUE 4
+#define TURQUOISE 14
+#define WHITE 7
+
 #define CLICK_RATE 32728
 #define CLICK_SAMPLES 1500
 static s16 clickSamples[CLICK_SAMPLES] __attribute__((aligned(0x20)));
@@ -35,69 +39,83 @@ static void playClick(void)
     ndspChnWaveBufAdd(0, &clickWave);
 }
 
+static void beginScreen(PrintConsole *screen)
+{
+    consoleSelect(screen);
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    consoleClear();
+}
+
 static void line(void)
 {
+    consoleSetColor(TURQUOISE, BG_BLUE);
     printf("  +--------------------------+\n");
+    consoleSetColor(WHITE, BG_BLUE);
 }
 
 static void drawHeader(void)
 {
-    consoleSelect(&topScreen);
-    consoleClear();
-    printf("\n\n");
-    printf("       .----------------.\n");
-    printf("       |                |\n");
-    printf("       |   CHAT 3DS     |\n");
-    printf("       |                |\n");
-    printf("       '----------------'\n\n");
+    beginScreen(&topScreen);
+    printf("\n");
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("  .----------------.\n");
+    printf("  |  CHAT 3DS      |\n");
+    printf("  |  [  Sprechblase]|\n");
+    printf("  '----------------'\n\n");
+    consoleSetColor(WHITE, BG_BLUE);
     printf("       KI. DIREKT. MOBIL.\n\n");
     printf("   Dein kleiner KI-Begleiter\n");
     printf("   fuer den Nintendo 3DS.\n\n");
-    printf("   ------------------------\n");
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("  --------------------------\n");
     printf("       MADE BY TOASTLINUS\n");
-    printf("   ------------------------\n\n");
-    printf("   Willkommen bei Chat3DS!\n");
-    printf("\n");
+    printf("  --------------------------\n\n");
+    consoleSetColor(WHITE, BG_BLUE);
+    printf("   Willkommen bei Chat3DS!\n\n");
     printf("   Waehle unten, was du tun\n");
     printf("   moechtest.");
 }
 
 static void drawMenu(void)
 {
-    consoleSelect(&bottomScreen);
-    consoleClear();
+    beginScreen(&bottomScreen);
     printf("\n");
-    printf("          STARTSEITE\n");
-    printf("\n");
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("          STARTSEITE\n\n");
     line();
+    consoleSetColor(TURQUOISE, BG_BLUE);
     printf("  |                          |\n");
     printf("  |       HAUPTMENUE         |\n");
     printf("  |                          |\n");
     line();
     printf("\n");
+    consoleSetColor(selected == 0 ? TURQUOISE : WHITE, BG_BLUE);
     printf("  %s  CHAT STARTEN\n", selected == 0 ? ">>" : "  ");
+    consoleSetColor(WHITE, BG_BLUE);
     printf("      Mit Chat3DS loslegen\n\n");
+    consoleSetColor(selected == 1 ? TURQUOISE : WHITE, BG_BLUE);
     printf("  %s  UEBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
-    printf("      Infos zum Projekt\n");
-    printf("\n");
+    consoleSetColor(WHITE, BG_BLUE);
+    printf("      Infos zum Projekt\n\n");
     line();
+    consoleSetColor(TURQUOISE, BG_BLUE);
     printf("  |  HOCH / RUNTER  AUSWAHL  |\n");
     printf("  |  A               OEFFNEN|\n");
     printf("  |  START           ENDE   |\n");
     line();
-    printf("\n");
-    printf("          VERSION 0.4");
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("\n          VERSION 0.5");
+    consoleSetColor(WHITE, BG_BLUE);
 }
 
 static void drawChatInfo(void)
 {
-    consoleSelect(&bottomScreen);
-    consoleClear();
-    printf("\n");
-    printf("          CHAT STARTEN\n\n");
+    beginScreen(&bottomScreen);
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("\n          CHAT STARTEN\n\n");
     line();
-    printf("\n");
-    printf("  Der Chat-Bildschirm wird\n");
+    consoleSetColor(WHITE, BG_BLUE);
+    printf("\n  Der Chat-Bildschirm wird\n");
     printf("  gerade vorbereitet.\n\n");
     printf("  Fuer echte KI-Antworten\n");
     printf("  brauchen wir noch einen\n");
@@ -105,18 +123,19 @@ static void drawChatInfo(void)
     printf("  Deine Zugangsdaten werden\n");
     printf("  nicht in GitHub gespeichert.\n\n");
     line();
+    consoleSetColor(TURQUOISE, BG_BLUE);
     printf("\n  B  ZURUECK ZUM HAUPTMENUE");
+    consoleSetColor(WHITE, BG_BLUE);
 }
 
 static void drawAbout(void)
 {
-    consoleSelect(&bottomScreen);
-    consoleClear();
-    printf("\n");
-    printf("          UEBER CHAT3DS\n\n");
+    beginScreen(&bottomScreen);
+    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf("\n          UEBER CHAT3DS\n\n");
     line();
-    printf("\n");
-    printf("  Chat3DS ist ein Homebrew-\n");
+    consoleSetColor(WHITE, BG_BLUE);
+    printf("\n  Chat3DS ist ein Homebrew-\n");
     printf("  Projekt von ToastLinus.\n\n");
     printf("  Entwickelt fuer den\n");
     printf("  Nintendo 3DS.\n\n");
@@ -124,7 +143,9 @@ static void drawAbout(void)
     printf("  KI-Chat direkt auf deiner\n");
     printf("  Konsole!\n\n");
     line();
+    consoleSetColor(TURQUOISE, BG_BLUE);
     printf("\n  B  ZURUECK ZUM HAUPTMENUE");
+    consoleSetColor(WHITE, BG_BLUE);
 }
 
 int main(int argc, char* argv[])
