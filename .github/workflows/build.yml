@@ -22,10 +22,12 @@ jobs:
       - name: Install makerom
         run: |
           wget -q https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.19.0/makerom-v0.19.0-ubuntu_x86_64.zip -O /tmp/makerom.zip
-          mkdir -p /tmp/makerom
+          mkdir -p /tmp/makerom/bin
           unzip -q /tmp/makerom.zip -d /tmp/makerom
-          find /tmp/makerom -type f -name makerom -exec install -m 755 {} /usr/local/bin/makerom \;
-          makerom --help
+          find /tmp/makerom -type f -name makerom -exec cp {} /tmp/makerom/bin/makerom \;
+          chmod +x /tmp/makerom/bin/makerom
+          echo "/tmp/makerom/bin" >> "$GITHUB_PATH"
+          /tmp/makerom/bin/makerom --help
 
       - name: Package installable CIA
         run: |
