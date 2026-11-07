@@ -8,9 +8,9 @@ static PrintConsole bottomScreen;
 static int selected = 0;
 static int page = 0;
 
-#define BG_BLUE 4
-#define TURQUOISE 14
-#define WHITE 7
+#define BG_BLUE "\x1b[48;2;7;29;68m"
+#define TURQUOISE "\x1b[38;2;44;205;230m"
+#define WHITE "\x1b[38;2;235;248;255m"
 
 #define CLICK_RATE 32728
 #define CLICK_SAMPLES 1500
@@ -42,15 +42,14 @@ static void playClick(void)
 static void beginScreen(PrintConsole *screen)
 {
     consoleSelect(screen);
-    consoleSetColor(TURQUOISE, BG_BLUE);
-    consoleClear();
+    printf(BG_BLUE TURQUOISE);\n    consoleClear();
 }
 
 static void line(void)
 {
-    consoleSetColor(TURQUOISE, BG_BLUE);
+    printf(TURQUOISE);
     printf("  +--------------------------+\n");
-    consoleSetColor(WHITE, BG_BLUE);
+    printf(WHITE);
 }
 
 static void drawHeader(void)
@@ -89,11 +88,11 @@ static void drawMenu(void)
     printf("  |                          |\n");
     line();
     printf("\n");
-    consoleSetColor(selected == 0 ? TURQUOISE : WHITE, BG_BLUE);
+    printf(selected == 0 ? TURQUOISE : WHITE);
     printf("  %s  CHAT STARTEN\n", selected == 0 ? ">>" : "  ");
     consoleSetColor(WHITE, BG_BLUE);
     printf("      Mit Chat3DS loslegen\n\n");
-    consoleSetColor(selected == 1 ? TURQUOISE : WHITE, BG_BLUE);
+    printf(selected == 1 ? TURQUOISE : WHITE);
     printf("  %s  UEBER CHAT3DS\n", selected == 1 ? ">>" : "  ");
     consoleSetColor(WHITE, BG_BLUE);
     printf("      Infos zum Projekt\n\n");
