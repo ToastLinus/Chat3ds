@@ -148,6 +148,24 @@ static void drawChatInfo(void)
     printf(TURQUOISE "\n  B  %s" WHITE, tr("ZURUECK ZUM HAUPTMENUE", "BACK TO MAIN MENU"));
 }
 
+static void drawProviderInfo(void)
+{
+    beginScreen(&bottomScreen);
+    printf("\\n" TURQUOISE "          %s\\n\\n", tr("KI-ANBIETER", "AI PROVIDERS"));
+    line();
+    printf(WHITE "\\n  %s\\n\\n", tr("Noch ist kein KI-Dienst", "No AI service is connected"));
+    printf("  %s\\n", tr("mit Chat3DS verbunden.", "to Chat3DS yet."));
+    printf("  %s\\n\\n", tr("ChatGPT ist als erster", "ChatGPT is planned as the"));
+    printf("  %s\\n", tr("Anbieter geplant.", "first provider."));
+    printf("  %s\\n", tr("Claude und weitere Anbieter", "Claude and other providers"));
+    printf("  %s\\n\\n", tr("koennen spaeter folgen.", "may be added later."));
+    printf("  %s\\n", tr("Die Auswahl wird erst", "Provider selection will be"));
+    printf("  %s\\n", tr("freigeschaltet, wenn die", "enabled once the secure"));
+    printf("  %s\\n\\n", tr("sichere Verbindung steht.", "connection is ready."));
+    line();
+    printf(TURQUOISE "\\n  B  %s" WHITE, tr("ZURUECK", "BACK"));
+}
+
 static void drawSettings(void)
 {
     beginScreen(&bottomScreen);
@@ -228,9 +246,17 @@ int main(int argc, char* argv[])
             }
             if (kDown & KEY_A) {
                 if (settingSelected == 0) soundEnabled = !soundEnabled;
-                else if (settingSelected == 1) english = !english;
+                else if (settingSelected == 1) {
+                    english = !english;
+                    drawHeader();
+                }
+                else if (settingSelected == 2) {
+                    page = 4;
+                    playClick();
+                    drawProviderInfo();
+                    goto frame_end;
+                }
                 playClick();
-                drawHeader();
                 drawSettings();
             }
             if (kDown & KEY_B) {
@@ -239,12 +265,18 @@ int main(int argc, char* argv[])
                 drawMenu();
             }
         }
+        else if (page == 4 && (kDown & KEY_B)) {
+            playClick();
+            page = 3;
+            drawSettings();
+        }
         else if (kDown & KEY_B) {
             playClick();
             page = 0;
             drawMenu();
         }
 
+        frame_end:
         if (kDown & KEY_START) break;
         gfxFlushBuffers();
         gfxSwapBuffers();
