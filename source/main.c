@@ -42,7 +42,8 @@ static void playClick(void)
 static void beginScreen(PrintConsole *screen)
 {
     consoleSelect(screen);
-    printf(BG_BLUE TURQUOISE);\n    consoleClear();
+    printf(BG_BLUE TURQUOISE);
+    consoleClear();
 }
 
 static void line(void)
