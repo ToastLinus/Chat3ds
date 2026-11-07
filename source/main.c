@@ -67,7 +67,7 @@ static void drawMenu(void)
     printf("   HOCH / RUNTER  Auswaehlen\n");
     printf("   A               Oeffnen\n");
     printf("   START           Beenden\n\n");
-    printf("          BUILD 17");
+    printf("          VERSION 0.3");
 }
 
 static void drawChatInfo(void)
