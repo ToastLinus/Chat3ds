@@ -51,7 +51,7 @@ jobs:
       - name: Package installable CIA
         run: |
           MAKEROM="$(find /tmp/makerom -type f -name makerom | head -n 1)"
-          "$MAKEROM" -f cia -o Chat3ds.cia -target t -elf Chat3ds.elf -desc app:4 -exefslogo
+          "$MAKEROM" -f cia -o Chat3ds.cia -target t -elf Chat3ds.elf -rsf cia.rsf -desc app:4 -exefslogo
           test -s Chat3ds.cia
 
       - name: Upload 3DS files
