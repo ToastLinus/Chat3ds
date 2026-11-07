@@ -19,7 +19,7 @@ DATA :=
 INCLUDES :=
 GRAPHICS :=
 GFXBUILD := $(BUILD)
-ARCH := -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
+ARCH := -march=armv6k -mtune=mpcore -mfloat-abi=hard
 CFLAGS := -g -Wall -Wextra -O2 -mword-relocations -ffunction-sections $(ARCH) $(INCLUDE) -D__3DS__
 CXXFLAGS := $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS := -g $(ARCH)
